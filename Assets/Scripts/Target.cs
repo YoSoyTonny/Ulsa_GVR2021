@@ -8,6 +8,13 @@ public class Target : MonoBehaviour
   Color catchColor = Color.cyan;
 
   Renderer render;
+  [SerializeField]
+  MessageController textInteraction;
+  [SerializeField]
+  DialogItem dialogItem;
+  [SerializeField]
+  List<Object> dialogsItems;
+  int index;
 
   void Awake()
   {
@@ -15,4 +22,41 @@ public class Target : MonoBehaviour
   }
 
   public void HandleColor() => render.material.color = catchColor;
+
+  public void HandleTextInteraction() => textInteraction.gameObject?.SetActive(!textInteraction.gameObject.activeSelf);
+
+  public void handleClick()
+  {
+    if(!textInteraction.gameObject.activeSelf)
+    {
+      textInteraction.gameObject.SetActive(true);
+    }
+
+    if(dialogsItems[index] as AlertDialogueItem)
+    {
+      AlertDialogueItem item = dialogsItems[index] as AlertDialogueItem;
+      textInteraction.Message = item.Message;
+      textInteraction.FontColor =  item.AlertColor;
+    }
+    else
+    {
+      DialogItem item = dialogsItems[index] as DialogItem;
+      textInteraction.Message = item.Message;
+      textInteraction.FontColor = Color.white;
+    }
+
+    //textInteraction.Message = dialogsItems[index].Message;
+    //Debug.Log(dialogsItems[index].);
+    //index = index + 1 < dialogsItems.Count ? index + 1 : 0;
+    if(!(index + 1 < dialogsItems.Count))
+    {
+      index = 0;
+      HandleTextInteraction();
+    }
+    else
+    {
+      index++;
+    }
+  }
+
 }

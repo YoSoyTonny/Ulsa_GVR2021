@@ -1,8 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using MLAPI;
+using System.IO;
 
-public class VRCamera : MonoBehaviour
+public class VRCamera : NetworkBehaviour
 {
   [SerializeField]
   Color rayColor = Color.green;
@@ -22,9 +24,11 @@ public class VRCamera : MonoBehaviour
   VRControls vrcontrols;
 
   Target target;
+  Camera m_camera;
 
   void Awake()
   {
+    m_camera = GetComponent<Camera>();
     vrcontrols = new VRControls();
   }
 
@@ -40,18 +44,47 @@ public class VRCamera : MonoBehaviour
 
   void Start()
   {
+    if(IsLocalPlayer)
+    {
       reticleTrs.localScale = initialScale;
-      vrcontrols.Gameplay.VRClic.performed += _=> ClickOverObject();
+      vrcontrols.Gameplay.VRClick.performed += _=> ClickOverObject();
+    }
+    else
+    {
+      m_camera.enabled = false;
+    }
   }
 
-  void ClickOverObject() => target?.HandleColor();
+  void ClickOverObject()
+  {
+    Debug.Log(target?.gameObject.layer);
+    switch(target?.gameObject.layer)
+      {
+        case 8:
+          target?.handleClick();
+          //target.HandleColor();
+
+          break;
+        case 9:
+          //Debug.Log("click");
+          //target?.HandleTextInteraction();
+          break;
+      }
+  }
+
+  void Update()
+  {
+    #if UNITY_STANDALONE_WIN
+    if(!IsLocalPlayer) return;
+    transform.Translate(new Vector3(AxisDirection.x, 0f, AxisDirection.y) * Time.deltaTime * 3f);
+    #endif
+  }
 
   void FixedUpdate()
   {
     if(Physics.Raycast(transform.position, transform.forward, out hit, rayDistance, rayLayerDetection))
     {
       target = hit.collider.GetComponent<Target>();
-      //target.HandleColor();
       reticleTrs.position = hit.point;
       reticleTrs.localScale = initialScale * hit.distance;
       reticleTrs.localRotation = Quaternion.LookRotation(hit.normal);
@@ -71,4 +104,27 @@ public class VRCamera : MonoBehaviour
     Gizmos.color = rayColor;
     Gizmos.DrawRay(transform.position, transform.forward * rayDistance);
   }
+
+  public override void NetworkStart()
+  {
+    transform.position = Gamemanager.instance.startPoint;
+    base.NetworkStart();
+  }
+
+  /*public override void NetworkStart(Stream stream)
+  {
+    base.NetworkStart(stream);
+  }*/
+
+  public override void OnGainedOwnership()
+  {
+    base.OnGainedOwnership();
+  }
+
+  public override void OnLostOwnership()
+  {
+    base.OnLostOwnership();
+  }
+
+  Vector2 AxisDirection => vrcontrols.Gameplay.Movement.ReadValue<Vector2>();
 }

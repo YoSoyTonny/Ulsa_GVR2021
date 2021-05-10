@@ -16,12 +16,20 @@ public class @VRControls : IInputActionCollection, IDisposable
     ""maps"": [
         {
             ""name"": ""Gameplay"",
-            ""id"": ""b6887b06-ecc1-4e92-af2b-f40e0d69d182"",
+            ""id"": ""75601295-220f-4ebc-828b-e48db4e44398"",
             ""actions"": [
                 {
-                    ""name"": ""VRClic"",
-                    ""type"": ""Button"",
-                    ""id"": ""4af0be89-d6a2-49f5-8ea6-a71aa779ae43"",
+                    ""name"": ""VRClick"",
+                    ""type"": ""Value"",
+                    ""id"": ""a0f91a80-b229-40a8-98fb-5596d3302f32"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
+                },
+                {
+                    ""name"": ""Movement"",
+                    ""type"": ""Value"",
+                    ""id"": ""80ac8804-2610-4d25-beed-5ba2fa8fed06"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """"
@@ -30,34 +38,113 @@ public class @VRControls : IInputActionCollection, IDisposable
             ""bindings"": [
                 {
                     ""name"": """",
-                    ""id"": ""dff1d80b-2d1c-455f-bd6b-534e693e18c2"",
+                    ""id"": ""8af353c4-2b59-45f7-ac96-07dd6f55f2a7"",
                     ""path"": ""<Mouse>/leftButton"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""VRClic"",
+                    ""groups"": ""PC"",
+                    ""action"": ""VRClick"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
                 {
                     ""name"": """",
-                    ""id"": ""c21434a7-3401-4f4a-96f6-1b57ad147502"",
+                    ""id"": ""2a5c7fa5-19ba-4abb-8a11-884e3128277f"",
                     ""path"": ""<Touchscreen>/primaryTouch/tap"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""VRClic"",
+                    ""groups"": ""Android"",
+                    ""action"": ""VRClick"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""2D Vector"",
+                    ""id"": ""47aeacf3-63ea-4d30-b163-e55f18c42fea"",
+                    ""path"": ""2DVector"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Movement"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""up"",
+                    ""id"": ""7f418050-92f3-43c0-a538-81c767320e33"",
+                    ""path"": ""<Keyboard>/w"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Movement"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""down"",
+                    ""id"": ""78c96035-048d-4b13-b00c-a920a4c2f0a8"",
+                    ""path"": ""<Keyboard>/s"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Movement"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""left"",
+                    ""id"": ""700d9ed0-cd5d-4000-b1c4-ab57d6294f8c"",
+                    ""path"": ""<Keyboard>/a"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Movement"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""right"",
+                    ""id"": ""35fe570b-f86e-4e01-b148-5ebf2454c3e9"",
+                    ""path"": ""<Keyboard>/d"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Movement"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
                 }
             ]
         }
     ],
-    ""controlSchemes"": []
+    ""controlSchemes"": [
+        {
+            ""name"": ""PC"",
+            ""bindingGroup"": ""PC"",
+            ""devices"": [
+                {
+                    ""devicePath"": ""<Mouse>"",
+                    ""isOptional"": false,
+                    ""isOR"": false
+                }
+            ]
+        },
+        {
+            ""name"": ""Android"",
+            ""bindingGroup"": ""Android"",
+            ""devices"": [
+                {
+                    ""devicePath"": ""<Touchscreen>"",
+                    ""isOptional"": false,
+                    ""isOR"": false
+                }
+            ]
+        }
+    ]
 }");
         // Gameplay
         m_Gameplay = asset.FindActionMap("Gameplay", throwIfNotFound: true);
-        m_Gameplay_VRClic = m_Gameplay.FindAction("VRClic", throwIfNotFound: true);
+        m_Gameplay_VRClick = m_Gameplay.FindAction("VRClick", throwIfNotFound: true);
+        m_Gameplay_Movement = m_Gameplay.FindAction("Movement", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -107,12 +194,14 @@ public class @VRControls : IInputActionCollection, IDisposable
     // Gameplay
     private readonly InputActionMap m_Gameplay;
     private IGameplayActions m_GameplayActionsCallbackInterface;
-    private readonly InputAction m_Gameplay_VRClic;
+    private readonly InputAction m_Gameplay_VRClick;
+    private readonly InputAction m_Gameplay_Movement;
     public struct GameplayActions
     {
         private @VRControls m_Wrapper;
         public GameplayActions(@VRControls wrapper) { m_Wrapper = wrapper; }
-        public InputAction @VRClic => m_Wrapper.m_Gameplay_VRClic;
+        public InputAction @VRClick => m_Wrapper.m_Gameplay_VRClick;
+        public InputAction @Movement => m_Wrapper.m_Gameplay_Movement;
         public InputActionMap Get() { return m_Wrapper.m_Gameplay; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -122,22 +211,47 @@ public class @VRControls : IInputActionCollection, IDisposable
         {
             if (m_Wrapper.m_GameplayActionsCallbackInterface != null)
             {
-                @VRClic.started -= m_Wrapper.m_GameplayActionsCallbackInterface.OnVRClic;
-                @VRClic.performed -= m_Wrapper.m_GameplayActionsCallbackInterface.OnVRClic;
-                @VRClic.canceled -= m_Wrapper.m_GameplayActionsCallbackInterface.OnVRClic;
+                @VRClick.started -= m_Wrapper.m_GameplayActionsCallbackInterface.OnVRClick;
+                @VRClick.performed -= m_Wrapper.m_GameplayActionsCallbackInterface.OnVRClick;
+                @VRClick.canceled -= m_Wrapper.m_GameplayActionsCallbackInterface.OnVRClick;
+                @Movement.started -= m_Wrapper.m_GameplayActionsCallbackInterface.OnMovement;
+                @Movement.performed -= m_Wrapper.m_GameplayActionsCallbackInterface.OnMovement;
+                @Movement.canceled -= m_Wrapper.m_GameplayActionsCallbackInterface.OnMovement;
             }
             m_Wrapper.m_GameplayActionsCallbackInterface = instance;
             if (instance != null)
             {
-                @VRClic.started += instance.OnVRClic;
-                @VRClic.performed += instance.OnVRClic;
-                @VRClic.canceled += instance.OnVRClic;
+                @VRClick.started += instance.OnVRClick;
+                @VRClick.performed += instance.OnVRClick;
+                @VRClick.canceled += instance.OnVRClick;
+                @Movement.started += instance.OnMovement;
+                @Movement.performed += instance.OnMovement;
+                @Movement.canceled += instance.OnMovement;
             }
         }
     }
     public GameplayActions @Gameplay => new GameplayActions(this);
+    private int m_PCSchemeIndex = -1;
+    public InputControlScheme PCScheme
+    {
+        get
+        {
+            if (m_PCSchemeIndex == -1) m_PCSchemeIndex = asset.FindControlSchemeIndex("PC");
+            return asset.controlSchemes[m_PCSchemeIndex];
+        }
+    }
+    private int m_AndroidSchemeIndex = -1;
+    public InputControlScheme AndroidScheme
+    {
+        get
+        {
+            if (m_AndroidSchemeIndex == -1) m_AndroidSchemeIndex = asset.FindControlSchemeIndex("Android");
+            return asset.controlSchemes[m_AndroidSchemeIndex];
+        }
+    }
     public interface IGameplayActions
     {
-        void OnVRClic(InputAction.CallbackContext context);
+        void OnVRClick(InputAction.CallbackContext context);
+        void OnMovement(InputAction.CallbackContext context);
     }
 }
